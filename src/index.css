@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@400;600;700&family=Caveat:wght@400;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 253 252 247; /* paper */
+    --foreground: 46 46 46; /* graphite */
+
+    --card: 253 252 247; /* paper */
+    --card-foreground: 46 46 46; /* graphite */
+
+    --popover: 253 252 247; /* paper */
+    --popover-foreground: 46 46 46; /* graphite */
+
+    --primary: 59 130 246; /* paper-blue */
+    --primary-foreground: 253 252 247; /* paper */
+
+    --secondary: 159 168 218; /* muted-lilac */
+    --secondary-foreground: 46 46 46; /* graphite */
+
+    --muted: 241 245 249;
+    --muted-foreground: 100 116 139;
+
+    --accent: 76 175 80; /* finance-green */
+    --accent-foreground: 253 252 247; /* paper */
+
+    --destructive: 239 83 80; /* coral-red */
+    --destructive-foreground: 253 252 247; /* paper */
+
+    --border: 227 234 242; /* grid-blue */
+    --input: 227 234 242; /* grid-blue */
+    --ring: 59 130 246; /* paper-blue */
+
+    --radius: 12px;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-paper text-graphite font-sans;
+    background-image: var(--tw-gradient-to-r), var(--tw-gradient-to-b);
+    background-image: 
+      linear-gradient(to right, #E3EAF2 1px, transparent 1px),
+      linear-gradient(to bottom, #E3EAF2 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+}
+
+@layer components {
+  /* Cartoony button styles */
+  .btn-cartoony {
+    @apply font-medium py-3 px-6 rounded-lg transition-all transform hover:scale-105 active:scale-95;
+  }
+  
+  .btn-primary {
+    @apply btn-cartoony bg-paper-blue hover:bg-paper-blue/90 text-paper;
+  }
+  
+  .btn-success {
+    @apply btn-cartoony bg-finance-green hover:bg-finance-green/90 text-paper;
+  }
+  
+  .btn-danger {
+    @apply btn-cartoony bg-coral-red hover:bg-coral-red/90 text-paper;
+  }
+  
+  /* Sticky note style cards */
+  .card-sticky {
+    @apply bg-paper rounded-xl shadow-paper border border-grid-blue p-6;
+    position: relative;
+  }
+  
+  .card-sticky::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 20px;
+    width: 30px;
+    height: 20px;
+    background: #FFE082;
+    border-radius: 0 0 12px 12px;
+    opacity: 0.7;
+  }
+  
+  /* XP Bar styling */
+  .xp-bar {
+    @apply bg-grid-blue rounded-full overflow-hidden;
+    background: linear-gradient(90deg, #4CAF50 var(--progress, 0%), #E3EAF2 var(--progress, 0%));
+  }
+  
+  .xp-bar-fill {
+    @apply bg-finance-green h-3 rounded-full transition-all duration-500 ease-out;
+    background: linear-gradient(90deg, #66BB6A, #4CAF50);
+  }
+  
+  /* Level up animations */
+  .level-up-popup {
+    @apply fixed inset-0 z-50 flex items-center justify-center;
+    animation: bounce-in 0.6s ease-out;
+  }
+  
+  .confetti-particle {
+    @apply absolute w-2 h-2 rounded-full;
+    animation: confetti 2s ease-out forwards;
+  }
+  
+  /* Squared paper effect for specific sections */
+  .squared-paper {
+    background-image: 
+      linear-gradient(to right, #E3EAF2 1px, transparent 1px),
+      linear-gradient(to bottom, #E3EAF2 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  
+  /* Table with notebook lines */
+  .table-notebook tr:nth-child(even) {
+    background: linear-gradient(to right, transparent 0%, #F8FAFC 100%);
+  }
+  
+  .table-notebook tr:nth-child(odd) {
+    background: linear-gradient(to right, transparent 0%, #FFFFFF 100%);
+  }
+}
