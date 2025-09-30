@@ -1,43 +1,8 @@
 import confetti from 'canvas-confetti'
-import { Howl } from 'howler'
-
-// Sound effects using data URLs (generated sounds)
-const sounds = {
-  // Simple beep for button clicks (generated)
-  click: new Howl({
-    src: ['data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuAzvLYjUkMAC2ayvLFcyIGd3JmZL5+xO6ZUIp1TRgE'],
-    volume: 0.3,
-    rate: 2.0
-  }),
-  
-  // Level up sound (cheerful beep sequence)
-  levelUp: new Howl({
-    src: ['data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuAzvLYjUkMAC2ayvLFcyIGKILN8diLNgcfe8z09IkhBB2Gz/LNeSUFJHbF8N2QQAoUXrTp66hVFApGn+DyvmwhBSuAzvLYjUkMAC2ayvLFcyIGCijv6qxcGgU7k+fty3YkBCOH0PLNeSUGG37K89mKNgcfe8z09IkhBB2Gz/LNeSUFJHbF8N2QQAoUXrTp66hVFApGn+DyvmyhBSuAzvLYiUgMA'],
-    volume: 0.5,
-    rate: 1.5
-  }),
-  
-  // Trade executed sound
-  trade: new Howl({
-    src: ['data:audio/wav;base64,UklGRnIGAABXQVZFZm10IBAAAAABA',
-'AEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj'],
-    volume: 0.4
-  }),
-  
-  // Badge earned sound
-  badge: new Howl({
-    src: ['data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuAzvLYjUkMAC2ayvLFcyIGKILN8diLNgcfe8z09IkhBB2Gz/LNeSUFJHbF8N2QQAoUXrTp66hVFApGn+DyvmwhBSuAzvLYjUkMAC2ayvLFcyIGHYLP8s15JQUrfsrz2Yo2Bx97zPT0iSEEHYbP8s15JQUkdsXw3ZBACRRetOnrqFUUCkaf4PK+bCEFK4DO8tiNSQwALZrK8sVzIgYoAILQ'],
-    volume: 0.6,
-    rate: 1.2
-  })
-}
-
-// Preload sounds
-Object.values(sounds).forEach(sound => sound.load())
+import { audioManager } from './audioManager'
 
 export class GameificationManager {
   private static instance: GameificationManager
-  private soundEnabled = true
   
   static getInstance(): GameificationManager {
     if (!GameificationManager.instance) {
@@ -46,28 +11,18 @@ export class GameificationManager {
     return GameificationManager.instance
   }
   
-  // Sound management
-  setSoundEnabled(enabled: boolean) {
-    this.soundEnabled = enabled
-  }
-  
-  playSound(soundType: keyof typeof sounds) {
-    if (this.soundEnabled) {
-      try {
-        sounds[soundType].play()
-      } catch (error) {
-        console.warn('Failed to play sound:', error)
-      }
-    }
-  }
-  
-  // Confetti effects
+  // Enhanced celebration methods with improved audio
   celebrateButtonClick() {
-    this.playSound('click')
+    audioManager.playSound('click')
   }
   
-  celebrateTrade() {
-    this.playSound('trade')
+  celebrateTrade(isProfit?: boolean, amount?: number) {
+    // Use context-aware sound selection
+    if (isProfit !== undefined) {
+      audioManager.playTradeSound(isProfit, amount)
+    } else {
+      audioManager.playSound('trade')
+    }
     
     // Small confetti burst
     confetti({
@@ -79,7 +34,7 @@ export class GameificationManager {
   }
   
   celebrateLevelUp() {
-    this.playSound('levelUp')
+    audioManager.playSound('levelUp')
     
     // Big confetti celebration
     const count = 200
@@ -125,7 +80,7 @@ export class GameificationManager {
   }
   
   celebrateBadgeEarned() {
-    this.playSound('badge')
+    audioManager.playSound('badge')
     
     // Sticker peel effect with confetti
     confetti({
@@ -150,7 +105,7 @@ export class GameificationManager {
   }
   
   celebrateChallengeComplete() {
-    this.playSound('levelUp')
+    audioManager.playSound('challenge')
     
     // Epic confetti celebration
     const duration = 3000
@@ -262,6 +217,83 @@ export class GameificationManager {
     }, 5000)
     
     this.celebrateLevelUp()
+  }
+  
+  // Additional feedback methods
+  showFeedback(message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') {
+    // Play contextual sound
+    switch (type) {
+      case 'success':
+        audioManager.playContextualSound('positive')
+        break
+      case 'error':
+        audioManager.playContextualSound('negative')
+        break
+      case 'info':
+        audioManager.playContextualSound('neutral')
+        break
+      case 'warning':
+        audioManager.playSound('whoosh')
+        break
+    }
+
+    // Create visual feedback
+    const feedbackElement = document.createElement('div')
+    feedbackElement.textContent = message
+    feedbackElement.className = `
+      fixed top-4 right-4 z-[9999] pointer-events-none
+      px-4 py-2 rounded-lg shadow-lg font-medium text-sm
+      animate-bounce-in max-w-sm
+      ${type === 'success' ? 'bg-finance-green text-white' : ''}
+      ${type === 'error' ? 'bg-coral-red text-white' : ''}
+      ${type === 'info' ? 'bg-paper-blue text-white' : ''}
+      ${type === 'warning' ? 'bg-yellow-500 text-white' : ''}
+    `
+    
+    document.body.appendChild(feedbackElement)
+    
+    // Animate and remove
+    setTimeout(() => {
+      feedbackElement.style.transform = 'translateX(100%)'
+      feedbackElement.style.opacity = '0'
+      feedbackElement.style.transition = 'all 0.3s ease-out'
+    }, 2000)
+    
+    setTimeout(() => {
+      if (feedbackElement.parentNode) {
+        document.body.removeChild(feedbackElement)
+      }
+    }, 2300)
+  }
+  
+  // Quick action celebrations
+  celebrateQuickAction(action: string) {
+    audioManager.playSound('whoosh')
+    this.showFeedback(`⚡ ${action}`, 'info')
+  }
+  
+  celebrateHotkey(action: string) {
+    audioManager.playSound('ding', 0.7)
+    this.showFeedback(`⌨️ ${action}`, 'success')
+  }
+  
+  celebrateChallenge(challengeName: string) {
+    audioManager.playSound('success')
+    this.showFeedback(`🎯 ${challengeName}`, 'success')
+  }
+  
+  // Error feedback
+  showError(message: string) {
+    this.showFeedback(`❌ ${message}`, 'error')
+  }
+  
+  showWarning(message: string) {
+    this.showFeedback(`⚠️ ${message}`, 'warning')
+  }
+  
+  // Initialize audio manager when gamification starts
+  async initializeAudio() {
+    await audioManager.initialize()
   }
 }
 

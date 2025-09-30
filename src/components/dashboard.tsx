@@ -6,16 +6,21 @@ import { SimpleChart } from "@/components/trading/simple-chart"
 import { ChallengeCard } from "@/components/gamification/challenge-card"
 import { NewsFeed } from "@/components/news/news-feed"
 import { Button } from "@/components/ui/button"
+import { AudioControls } from "@/components/ui/audio-controls"
 import { useChallengeStore } from "@/stores/challengeStore"
+import { gamification } from "@/lib/gamification"
 
 export function Dashboard() {
   const { challenges, initializeChallenges } = useChallengeStore()
   
-  // Initialize challenges on mount
+  // Initialize challenges and audio on mount
   useEffect(() => {
     if (challenges.length === 0) {
       initializeChallenges()
     }
+    
+    // Initialize audio system
+    gamification.initializeAudio()
   }, [challenges.length, initializeChallenges])
   
   const activeChallenge = challenges.find(c => c.status === 'in_progress')
@@ -37,6 +42,7 @@ export function Dashboard() {
             </div>
             
             <div className="flex items-center gap-4">
+              <AudioControls isCompact={true} />
               <Button variant="outline" size="sm">
                 💾 Save Portfolio
               </Button>
@@ -80,6 +86,9 @@ export function Dashboard() {
               </div>
             )}
 
+            {/* Audio Controls */}
+            <AudioControls />
+            
             {/* News Feed */}
             <NewsFeed />
           </div>

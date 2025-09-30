@@ -38,8 +38,11 @@ export function OrderTicket() {
       status: 'filled'
     })
     
-    // Gamification effects
-    gamification.celebrateTrade()
+    // Enhanced gamification effects with context-aware audio
+    const isProfit = Math.random() > 0.5 // Mock profit/loss determination
+    const tradeValue = quantity * price
+    
+    gamification.celebrateTrade(isProfit, tradeValue)
     gamification.showXpGain(25)
     
     console.log(`${side.toUpperCase()} order submitted: ${quantity} shares of ${symbol} at $${price}`)
