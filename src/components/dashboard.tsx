@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { XpBar } from "@/components/ui/xp-bar"
 import { OrderTicket } from "@/components/trading/order-ticket"
 import { PositionsTable } from "@/components/trading/positions-table"
-import { SimpleChart } from "@/components/trading/simple-chart"
+import { EnhancedChart } from "@/components/trading/enhanced-chart"
 import { ChallengeCard } from "@/components/gamification/challenge-card"
 import { NewsFeed } from "@/components/news/news-feed"
 import { Button } from "@/components/ui/button"
@@ -60,7 +60,7 @@ export function Dashboard() {
 
           {/* Center - Chart Area */}
           <div className="lg:col-span-6">
-            <SimpleChart symbol="AAPL" />
+            <EnhancedChart symbol="AAPL" />
           </div>
 
           {/* Right Sidebar - Challenges & News */}
