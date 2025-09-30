@@ -31,7 +31,7 @@ const initialChallenges: Challenge[] = [
     id: 'apple-trader',
     name: 'Apple Trader',
     description: 'Make 3 trades in AAPL stock',
-    difficulty: 'easy',
+    difficulty: 'beginner',
     xpReward: 100,
     badge: {
       id: 'apple-badge',
@@ -54,7 +54,7 @@ const initialChallenges: Challenge[] = [
     id: 'profit-seeker',
     name: 'Profit Seeker',
     description: 'Achieve $500 in total profits',
-    difficulty: 'medium',
+    difficulty: 'intermediate',
     xpReward: 250,
     badge: {
       id: 'profit-badge',
@@ -77,7 +77,7 @@ const initialChallenges: Challenge[] = [
     id: 'iron-hands',
     name: 'Iron Hands',
     description: 'Survive a 10% portfolio drawdown without panicking',
-    difficulty: 'hard',
+    difficulty: 'advanced',
     xpReward: 500,
     badge: {
       id: 'iron-hands-badge',
@@ -100,7 +100,7 @@ const initialChallenges: Challenge[] = [
     id: 'day-trader',
     name: 'Day Trader',
     description: 'Complete 10 trades in a single day',
-    difficulty: 'medium',
+    difficulty: 'intermediate',
     xpReward: 300,
     badge: {
       id: 'day-trader-badge',
@@ -123,7 +123,7 @@ const initialChallenges: Challenge[] = [
     id: 'winning-streak',
     name: 'Winning Streak',
     description: 'Make 5 profitable trades in a row',
-    difficulty: 'hard',
+    difficulty: 'advanced',
     xpReward: 400,
     badge: {
       id: 'streak-badge',
@@ -146,7 +146,7 @@ const initialChallenges: Challenge[] = [
     id: 'diversification-master',
     name: 'Diversification Master',
     description: 'Trade 5 different symbols in one week',
-    difficulty: 'medium',
+    difficulty: 'intermediate',
     xpReward: 350,
     badge: {
       id: 'diversification-badge',
@@ -169,7 +169,7 @@ const initialChallenges: Challenge[] = [
     id: 'volume-trader',
     name: 'Volume Trader',
     description: 'Execute trades worth $25,000 in total volume',
-    difficulty: 'hard',
+    difficulty: 'advanced',
     xpReward: 600,
     badge: {
       id: 'volume-badge',
@@ -192,7 +192,7 @@ const initialChallenges: Challenge[] = [
     id: 'marathon-trader',
     name: 'Marathon Trader',
     description: 'Trade for 7 consecutive days',
-    difficulty: 'hard',
+    difficulty: 'advanced',
     xpReward: 500,
     badge: {
       id: 'marathon-badge',
@@ -215,7 +215,7 @@ const initialChallenges: Challenge[] = [
     id: 'profit-master',
     name: 'Profit Master',
     description: 'Achieve $2,500 in total profits',
-    difficulty: 'hard',
+    difficulty: 'advanced',
     xpReward: 750,
     badge: {
       id: 'profit-master-badge',
@@ -352,51 +352,47 @@ export const useChallengeStore = create<ChallengeState>()(
           get().updateChallengeProgress('apple-trader', progress)
         }
         
-        // Update Day Trader challenge (simplified - just count all trades)
+        // Update Day Trader challenge (count trades in single day)
         const dayTrader = challenges.find(c => c.id === 'day-trader')
         if (dayTrader && dayTrader.status === 'in_progress') {
-          const newCurrent = dayTrader.requirements[0].current + 1
-          const progress = (newCurrent / dayTrader.requirements[0].target) * 100
+          const today = new Date().toDateString()
+          const currentStreakData = get().streakData
+          const todayTrades = currentStreakData.dailyTrades.find(d => d.date === today)
+          const todayCount = todayTrades ? todayTrades.count : 1
           
-          const updatedChallenges = challenges.map(c =>
-            c.id === 'day-trader'
-              ? {
-                  ...c,
-                  requirements: [{ ...c.requirements[0], current: newCurrent }],
-                  progress
-                }
-              : c
-          )
-          
-          set({ challenges: updatedChallenges })
-          get().updateChallengeProgress('day-trader', progress)
+          const progress = (todayCount / dayTrader.requirements[0].target) * 100
+          get().updateChallengeProgress('day-trader', Math.min(progress, 100))
         }
         
         // Update Winning Streak challenge
         const winningStreak = challenges.find(c => c.id === 'winning-streak')
         if (winningStreak && winningStreak.status === 'in_progress') {
-          const progress = (streakData.consecutiveWins / winningStreak.requirements[0].target) * 100
+          const currentStreakData = get().streakData
+          const progress = (currentStreakData.consecutiveWins / winningStreak.requirements[0].target) * 100
           get().updateChallengeProgress('winning-streak', Math.min(progress, 100))
         }
         
         // Update Diversification Master challenge
         const diversificationMaster = challenges.find(c => c.id === 'diversification-master')
         if (diversificationMaster && diversificationMaster.status === 'in_progress') {
-          const progress = (streakData.tradedSymbols.size / diversificationMaster.requirements[0].target) * 100
+          const currentStreakData = get().streakData
+          const progress = (currentStreakData.tradedSymbols.size / diversificationMaster.requirements[0].target) * 100
           get().updateChallengeProgress('diversification-master', Math.min(progress, 100))
         }
         
         // Update Volume Trader challenge
         const volumeTrader = challenges.find(c => c.id === 'volume-trader')
         if (volumeTrader && volumeTrader.status === 'in_progress') {
-          const progress = (streakData.totalVolume / volumeTrader.requirements[0].target) * 100
+          const currentStreakData = get().streakData
+          const progress = (currentStreakData.totalVolume / volumeTrader.requirements[0].target) * 100
           get().updateChallengeProgress('volume-trader', Math.min(progress, 100))
         }
         
         // Update Marathon Trader challenge
         const marathonTrader = challenges.find(c => c.id === 'marathon-trader')
         if (marathonTrader && marathonTrader.status === 'in_progress') {
-          const progress = (streakData.consecutiveTradingDays / marathonTrader.requirements[0].target) * 100
+          const currentStreakData = get().streakData
+          const progress = (currentStreakData.consecutiveTradingDays / marathonTrader.requirements[0].target) * 100
           get().updateChallengeProgress('marathon-trader', Math.min(progress, 100))
         }
         

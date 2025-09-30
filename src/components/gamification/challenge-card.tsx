@@ -24,10 +24,37 @@ export function ChallengeCard({ challenge, isActive = false }: ChallengeCardProp
   
   const getDifficultyColor = (difficulty: Challenge['difficulty']) => {
     switch (difficulty) {
-      case 'easy': return 'text-finance-green'
-      case 'medium': return 'text-paper-blue'
-      case 'hard': return 'text-coral-red'
+      case 'beginner': return 'text-finance-green'
+      case 'intermediate': return 'text-paper-blue'
+      case 'advanced': return 'text-amber-500'
+      case 'expert': return 'text-coral-red'
       default: return 'text-muted-foreground'
+    }
+  }
+  
+  const formatRequirementType = (type: string) => {
+    switch (type) {
+      case 'trades': return 'Trades'
+      case 'profit': return 'Profit ($)'
+      case 'drawdown': return 'Drawdown (%)'
+      case 'streak': return 'Win Streak'
+      case 'symbols': return 'Symbols'
+      case 'time': return 'Days'
+      case 'risk_mgmt': return 'Risk Management'
+      case 'volume': return 'Volume ($)'
+      default: return type
+    }
+  }
+  
+  const formatRequirementValue = (type: string, value: number) => {
+    switch (type) {
+      case 'profit':
+      case 'volume':
+        return `$${value.toLocaleString()}`
+      case 'drawdown':
+        return `${value}%`
+      default:
+        return value.toString()
     }
   }
   
@@ -75,9 +102,9 @@ export function ChallengeCard({ challenge, isActive = false }: ChallengeCardProp
           {challenge.requirements.map((req, index) => (
             <div key={index} className="space-y-1">
               <div className="flex justify-between text-sm">
-                <span className="capitalize">{req.type}</span>
+                <span>{formatRequirementType(req.type)}</span>
                 <span className="font-mono">
-                  {req.current}/{req.target}
+                  {formatRequirementValue(req.type, req.current)}/{formatRequirementValue(req.type, req.target)}
                 </span>
               </div>
               <Progress 

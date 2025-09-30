@@ -4,6 +4,7 @@ import { OrderTicket } from "@/components/trading/order-ticket"
 import { PositionsTable } from "@/components/trading/positions-table"
 import { SimpleChart } from "@/components/trading/simple-chart"
 import { ChallengeCard } from "@/components/gamification/challenge-card"
+import { ChallengeStats } from "@/components/gamification/challenge-stats"
 import { NewsFeed } from "@/components/news/news-feed"
 import { Button } from "@/components/ui/button"
 import { useChallengeStore } from "@/stores/challengeStore"
@@ -69,6 +70,9 @@ export function Dashboard() {
             {activeChallenge && (
               <ChallengeCard challenge={activeChallenge} isActive={true} />
             )}
+            
+            {/* Challenge Statistics */}
+            <ChallengeStats />
             
             {/* Available Challenges */}
             {availableChallenges.length > 0 && (
