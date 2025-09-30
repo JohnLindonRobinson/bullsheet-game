@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { User, Badge } from '../types'
+import { gamification } from '../lib/gamification'
 
 interface UserState {
   user: User | null
@@ -65,8 +66,11 @@ export const useUserStore = create<UserState>()(
       },
       
       levelUp: () => {
-        // This can trigger confetti and level up animations
-        console.log('Level up!')
+        const { user } = get()
+        if (user) {
+          console.log(`Level up! Now level ${user.level}`)
+          gamification.showLevelUpPopup(user.level)
+        }
       }
     }),
     {

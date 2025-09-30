@@ -1,10 +1,26 @@
+import { useEffect } from 'react'
 import { XpBar } from "@/components/ui/xp-bar"
 import { OrderTicket } from "@/components/trading/order-ticket"
 import { PositionsTable } from "@/components/trading/positions-table"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { SimpleChart } from "@/components/trading/simple-chart"
+import { ChallengeCard } from "@/components/gamification/challenge-card"
+import { NewsFeed } from "@/components/news/news-feed"
 import { Button } from "@/components/ui/button"
+import { useChallengeStore } from "@/stores/challengeStore"
 
 export function Dashboard() {
+  const { challenges, initializeChallenges } = useChallengeStore()
+  
+  // Initialize challenges on mount
+  useEffect(() => {
+    if (challenges.length === 0) {
+      initializeChallenges()
+    }
+  }, [challenges.length, initializeChallenges])
+  
+  const activeChallenge = challenges.find(c => c.status === 'in_progress')
+  const availableChallenges = challenges.filter(c => c.status === 'available').slice(0, 2)
+  
   return (
     <div className="min-h-screen bg-paper">
       {/* Header with XP Bar */}
@@ -42,100 +58,30 @@ export function Dashboard() {
             <OrderTicket />
           </div>
 
-          {/* Center - Chart Area (Placeholder) */}
+          {/* Center - Chart Area */}
           <div className="lg:col-span-6">
-            <Card className="h-[500px]">
-              <CardHeader>
-                <CardTitle className="text-lg font-handwrite">📈 Price Chart</CardTitle>
-              </CardHeader>
-              <CardContent className="flex items-center justify-center h-full">
-                <div className="text-center text-muted-foreground">
-                  <div className="text-6xl mb-4">📊</div>
-                  <h3 className="text-lg font-medium mb-2">Chart Coming Soon!</h3>
-                  <p className="text-sm">
-                    TradingView Lightweight Charts integration will go here
-                  </p>
-                  <Button variant="outline" className="mt-4">
-                    🔌 Connect Data Feed
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <SimpleChart symbol="AAPL" />
           </div>
 
-          {/* Right Sidebar - News & Levels */}
+          {/* Right Sidebar - Challenges & News */}
           <div className="lg:col-span-3 space-y-6">
-            {/* Current Challenge */}
-            <Card sticky>
-              <CardHeader>
-                <CardTitle className="text-lg font-handwrite">🎯 Current Challenge</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="text-center">
-                    <div className="text-2xl mb-2">🍎</div>
-                    <h4 className="font-medium">Apple Trader</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Make 3 trades in AAPL stock
-                    </p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Progress</span>
-                      <span>0/3 trades</span>
-                    </div>
-                    <div className="w-full bg-grid-blue rounded-full h-2">
-                      <div className="bg-finance-green h-2 rounded-full" style={{ width: '0%' }}></div>
-                    </div>
-                  </div>
-                  
-                  <div className="text-center text-sm text-muted-foreground">
-                    🏆 Reward: 100 XP + Apple Badge
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Active Challenge */}
+            {activeChallenge && (
+              <ChallengeCard challenge={activeChallenge} isActive={true} />
+            )}
+            
+            {/* Available Challenges */}
+            {availableChallenges.length > 0 && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-handwrite text-graphite">🎮 Available Challenges</h3>
+                {availableChallenges.map(challenge => (
+                  <ChallengeCard key={challenge.id} challenge={challenge} />
+                ))}
+              </div>
+            )}
 
             {/* News Feed */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg font-handwrite">📰 Market News</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="p-3 border border-grid-blue rounded-lg bg-paper/50">
-                    <div className="flex items-start gap-2">
-                      <span className="text-finance-green">📈</span>
-                      <div className="flex-1">
-                        <h5 className="font-medium text-sm">Apple hits new highs</h5>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Strong iPhone sales drive record quarter...
-                        </p>
-                        <span className="text-xs text-muted-foreground">2 hours ago</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="p-3 border border-grid-blue rounded-lg bg-paper/50">
-                    <div className="flex items-start gap-2">
-                      <span className="text-coral-red">📉</span>
-                      <div className="flex-1">
-                        <h5 className="font-medium text-sm">Tech selloff continues</h5>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Rising rates pressure growth stocks...
-                        </p>
-                        <span className="text-xs text-muted-foreground">4 hours ago</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <Button variant="outline" size="sm" className="w-full">
-                    📑 View All News
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <NewsFeed />
           </div>
         </div>
 

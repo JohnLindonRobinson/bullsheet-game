@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { usePortfolioStore } from "@/stores/portfolioStore"
 import { useUserStore } from "@/stores/userStore"
+import { useChallengeStore } from "@/stores/challengeStore"
+import { gamification } from "@/lib/gamification"
 
 export function OrderTicket() {
   const [symbol, setSymbol] = useState('AAPL')
@@ -12,19 +14,34 @@ export function OrderTicket() {
   
   const addTrade = usePortfolioStore(state => state.addTrade)
   const addXp = useUserStore(state => state.addXp)
+  const checkTradeProgress = useChallengeStore(state => state.checkTradeProgress)
   
   const handleSubmitOrder = () => {
-    addTrade({
+    const trade = {
       symbol,
       side,
       quantity,
-      price
-    })
+      price,
+      status: 'filled' as const
+    }
+    
+    addTrade(trade)
     
     // Award XP for completing a trade
     addXp(25)
     
-    // Simple success feedback
+    // Check challenge progress
+    checkTradeProgress({
+      ...trade,
+      id: crypto.randomUUID(),
+      timestamp: new Date(),
+      status: 'filled'
+    })
+    
+    // Gamification effects
+    gamification.celebrateTrade()
+    gamification.showXpGain(25)
+    
     console.log(`${side.toUpperCase()} order submitted: ${quantity} shares of ${symbol} at $${price}`)
   }
   

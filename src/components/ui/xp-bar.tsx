@@ -7,7 +7,6 @@ export function XpBar() {
   if (!user) return null
   
   const xpForCurrentLevel = (user.level - 1) * 1000
-  const xpForNextLevel = user.level * 1000
   const currentLevelProgress = user.xp - xpForCurrentLevel
   const progressPercentage = (currentLevelProgress / 1000) * 100
   
