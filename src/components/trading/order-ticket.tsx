@@ -5,12 +5,16 @@ import { usePortfolioStore } from "@/stores/portfolioStore"
 import { useUserStore } from "@/stores/userStore"
 import { useChallengeStore } from "@/stores/challengeStore"
 import { gamification } from "@/lib/gamification"
+import { useTradingHotkeys } from '@/hooks/useTradingHotkeys'
+import { HotkeyIndicator } from '@/components/ui/hotkey-indicator'
+import { HotkeyHelpModal } from '@/components/ui/hotkey-help-modal'
 
 export function OrderTicket() {
   const [symbol, setSymbol] = useState('AAPL')
   const [quantity, setQuantity] = useState(10)
   const [price, setPrice] = useState(150.00)
   const [side, setSide] = useState<'buy' | 'sell'>('buy')
+  const [showHelpModal, setShowHelpModal] = useState(false)
   
   const addTrade = usePortfolioStore(state => state.addTrade)
   const addXp = useUserStore(state => state.addXp)
@@ -44,6 +48,25 @@ export function OrderTicket() {
     
     console.log(`${side.toUpperCase()} order submitted: ${quantity} shares of ${symbol} at $${price}`)
   }
+  
+  // Set up trading hotkeys
+  const { hotkeys, triggerQuickBuy, triggerQuickSell, lastQuickTrade } = useTradingHotkeys({
+    currentSymbol: symbol,
+    quickQuantity: quantity,
+    onQuickBuy: (sym, qty) => {
+      setSymbol(sym)
+      setQuantity(qty)
+      setSide('buy')
+      handleSubmitOrder()
+    },
+    onQuickSell: (sym, qty) => {
+      setSymbol(sym)
+      setQuantity(qty)
+      setSide('sell')
+      handleSubmitOrder()
+    },
+    onShowHelp: () => setShowHelpModal(true),
+  })
   
   return (
     <Card className="w-full max-w-md">
@@ -91,30 +114,74 @@ export function OrderTicket() {
           <Button
             variant={side === 'buy' ? 'success' : 'outline'}
             onClick={() => setSide('buy')}
-            className="w-full"
+            className="w-full flex items-center justify-center gap-2"
           >
             Buy
+            <HotkeyIndicator keys={['b']} size="sm" />
           </Button>
           <Button
             variant={side === 'sell' ? 'destructive' : 'outline'}
             onClick={() => setSide('sell')}
-            className="w-full"
+            className="w-full flex items-center justify-center gap-2"
           >
             Sell
+            <HotkeyIndicator keys={['s']} size="sm" />
           </Button>
         </div>
         
         <Button 
           onClick={handleSubmitOrder}
-          className="w-full mt-4"
+          className="w-full mt-4 flex items-center justify-center gap-2"
           size="lg"
         >
           Submit Order
+          <HotkeyIndicator keys={['space']} size="sm" />
         </Button>
         
-        <div className="text-xs text-muted-foreground text-center mt-2">
-          📊 Earn 25 XP per trade!
+        <div className="flex items-center justify-between text-xs text-muted-foreground mt-2">
+          <span>📊 Earn 25 XP per trade!</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowHelpModal(true)}
+            className="h-auto p-1 text-xs"
+          >
+            <HotkeyIndicator keys={['?']} size="sm" />
+            Help
+          </Button>
         </div>
+        
+        {/* Quick Action Buttons */}
+        <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-grid-blue">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={triggerQuickBuy}
+            className="text-xs flex items-center gap-1"
+          >
+            ⚡ Quick Buy
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={triggerQuickSell}
+            className="text-xs flex items-center gap-1"
+          >
+            ⚡ Quick Sell
+          </Button>
+        </div>
+        
+        {lastQuickTrade && (
+          <div className="text-xs text-center text-muted-foreground mt-2 bg-muted-lilac/10 rounded p-2">
+            Last: {lastQuickTrade.side.toUpperCase()} {lastQuickTrade.quantity} {lastQuickTrade.symbol}
+          </div>
+        )}
+        
+        <HotkeyHelpModal
+          isOpen={showHelpModal}
+          onClose={() => setShowHelpModal(false)}
+          hotkeys={hotkeys}
+        />
       </CardContent>
     </Card>
   )
