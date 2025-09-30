@@ -56,9 +56,11 @@ export interface Challenge {
 }
 
 export interface ChallengeRequirement {
-  type: 'trades' | 'profit' | 'drawdown' | 'streak'
+  type: 'trades' | 'profit' | 'drawdown' | 'streak' | 'symbols' | 'time' | 'risk_mgmt' | 'volume'
   target: number
   current: number
+  timeframe?: 'day' | 'week' | 'month'
+  metadata?: Record<string, any>
 }
 
 export interface News {
