@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { MobileNav } from '@/components/ui/mobile-nav'
 import { MobileOrderTicket } from '@/components/trading/mobile-order-ticket'
 import { PositionsTable } from '@/components/trading/positions-table'
-import { MobileChart } from '@/components/trading/mobile-chart'
+import { PerformanceChart } from '@/components/trading/performance-chart'
 import { ChallengeCard } from '@/components/gamification/challenge-card'
 import { NewsFeed } from '@/components/news/news-feed'
 import { useChallengeStore } from '@/stores/challengeStore'
@@ -26,7 +26,7 @@ export function MobileDashboard() {
       case 'chart':
         return (
           <div className="h-full">
-            <MobileChart symbol="AAPL" />
+            <PerformanceChart symbol="AAPL" />
           </div>
         )
       
