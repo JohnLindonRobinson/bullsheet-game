@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen, waitFor, mockWindowSize } from '@/test/utils'
+import { render, screen, mockWindowSize } from '@/test/utils'
+import { waitFor } from '@testing-library/react'
 import { ResponsiveDashboard } from '../responsive-dashboard'
 import { useUserStore } from '@/stores/userStore'
 import { useChallengeStore } from '@/stores/challengeStore'
