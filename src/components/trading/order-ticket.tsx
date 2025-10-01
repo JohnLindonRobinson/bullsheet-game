@@ -20,9 +20,11 @@ export function OrderTicket() {
     const trade = {
       symbol,
       side,
+      type: side,
       quantity,
       price,
-      status: 'filled' as const
+      status: 'filled' as const,
+      profit: side === 'sell' ? Math.random() * 100 - 50 : undefined // Simulate profit/loss for sells
     }
     
     addTrade(trade)

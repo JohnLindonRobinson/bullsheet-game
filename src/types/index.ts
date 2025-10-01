@@ -20,10 +20,12 @@ export interface Trade {
   id: string
   symbol: string
   side: 'buy' | 'sell'
+  type: 'buy' | 'sell'
   quantity: number
   price: number
   timestamp: Date
   status: 'filled' | 'pending' | 'cancelled'
+  profit?: number
 }
 
 export interface Position {
@@ -47,7 +49,7 @@ export interface Challenge {
   id: string
   name: string
   description: string
-  difficulty: 'easy' | 'medium' | 'hard'
+  difficulty: 'beginner' | 'intermediate' | 'advanced' | 'expert'
   xpReward: number
   badge?: Badge
   requirements: ChallengeRequirement[]
@@ -56,9 +58,11 @@ export interface Challenge {
 }
 
 export interface ChallengeRequirement {
-  type: 'trades' | 'profit' | 'drawdown' | 'streak'
+  type: 'trades' | 'profit' | 'drawdown' | 'streak' | 'symbols' | 'time' | 'risk_mgmt' | 'volume'
   target: number
   current: number
+  timeframe?: 'day' | 'week' | 'month'
+  metadata?: Record<string, any>
 }
 
 export interface News {
