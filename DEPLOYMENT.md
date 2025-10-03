@@ -88,19 +88,19 @@ Point your domain to your server's IP address:
 
 ```
 Type: A
-Name: bullsheet.yourdomain.com
+Name: bullsheet.johnlindon.com
 Value: YOUR_SERVER_IP
 TTL: 300
 
 Type: A  
-Name: staging.bullsheet.yourdomain.com
+Name: staging.bullsheet.johnlindon.com
 Value: YOUR_SERVER_IP
 TTL: 300
 ```
 
-### 2. Update Caddyfile
+### 2. Domain Configuration
 
-Edit the `Caddyfile` and replace `yourdomain.com` with your actual domain:
+The Caddyfile is already configured for `bullsheet.johnlindon.com`:
 
 ```bash
 nano Caddyfile
@@ -146,7 +146,7 @@ docker compose -f docker-compose.prod.yml logs
 curl http://localhost:8080/health
 
 # Test application
-curl -I https://bullsheet.yourdomain.com
+curl -I https://bullsheet.johnlindon.com
 ```
 
 ## Automated Deployment (CI/CD)

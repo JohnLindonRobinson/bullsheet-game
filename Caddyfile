@@ -1,14 +1,14 @@
 # Caddyfile for BullSheet production deployment
-# Replace yourdomain.com with your actual domain
+# Configured for bullsheet.johnlindon.com
 
 {
     # Global options
-    email admin@yourdomain.com
+    email admin@johnlindon.com
     auto_https on
 }
 
 # Production site configuration
-bullsheet.yourdomain.com {
+bullsheet.johnlindon.com {
     # Reverse proxy to Docker container
     reverse_proxy app:80 {
         health_uri /health
@@ -22,7 +22,6 @@ bullsheet.yourdomain.com {
     # Security headers (additional to nginx)
     header {
         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-        X-Robots-Tag "noindex, nofollow"
         -Server
     }
 
@@ -64,7 +63,7 @@ bullsheet.yourdomain.com {
 }
 
 # Staging site configuration (optional)
-staging.bullsheet.yourdomain.com {
+staging.bullsheet.johnlindon.com {
     reverse_proxy staging-app:80 {
         health_uri /health
         health_interval 30s
@@ -93,8 +92,8 @@ staging.bullsheet.yourdomain.com {
 }
 
 # Redirect www to non-www
-www.bullsheet.yourdomain.com {
-    redir https://bullsheet.yourdomain.com{uri} permanent
+www.bullsheet.johnlindon.com {
+    redir https://bullsheet.johnlindon.com{uri} permanent
 }
 
 # Health check endpoint for monitoring

@@ -158,7 +158,7 @@ jobs:
       uses: treosh/lighthouse-ci-action@v10
       with:
         urls: |
-          https://bullsheet.yourdomain.com
+          https://bullsheet.johnlindon.com
         uploadArtifacts: true
         temporaryPublicStorage: true
         
