@@ -48,11 +48,11 @@ export class HistoricalDataService {
     const data: HistoricalDataPoint[] = []
     
     // Base price and volatility based on symbol
-    let basePrice = this.getBasePriceForSymbol(symbol)
+    const basePrice = this.getBasePriceForSymbol(symbol)
     const volatility = this.getVolatilityForSymbol(symbol)
     const trend = this.getTrendForSymbol(symbol)
     
-    let currentDate = new Date(startDate)
+    const currentDate = new Date(startDate)
     let previousClose = basePrice
     
     while (currentDate <= endDate) {

@@ -41,7 +41,7 @@ export const usePortfolioStore = create<PortfolioState>()(
           p => p.symbol === trade.symbol
         )
         
-        let newPositions = [...portfolio.positions]
+        const newPositions = [...portfolio.positions]
         
         if (existingPositionIndex >= 0) {
           const position = newPositions[existingPositionIndex]

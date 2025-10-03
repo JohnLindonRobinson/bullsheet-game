@@ -122,7 +122,7 @@ export class BacktestEngine {
           break
           
         case 'MACD_LINE':
-        case 'MACD_SIGNAL':
+        case 'MACD_SIGNAL': {
           const macd = technicalIndicatorsService.calculateMACD(
             data,
             strategy.parameters.macdFast as number || 12,
@@ -136,9 +136,10 @@ export class BacktestEngine {
             parameters: macd.parameters
           }
           break
+        }
           
         case 'BB_UPPER':
-        case 'BB_LOWER':
+        case 'BB_LOWER': {
           const bb = technicalIndicatorsService.calculateBollingerBands(
             data,
             strategy.parameters.bollingerPeriod as number || 20,
@@ -155,14 +156,16 @@ export class BacktestEngine {
             parameters: bb.parameters
           }
           break
+        }
           
-        case 'STOCH_K':
+        case 'STOCH_K': {
           const stoch = technicalIndicatorsService.calculateStochastic(
             data,
             strategy.parameters.stochPeriod as number || 14
           )
           indicators[indicatorKey] = stoch
           break
+        }
           
         case 'EMA_8':
           indicators[indicatorKey] = technicalIndicatorsService.calculateEMA(data, 8)
@@ -343,7 +346,7 @@ export class BacktestEngine {
         }
         return currentValue < rule.value
         
-      case 'cross_above':
+      case 'cross_above': {
         if (lookbackIndex >= indicator.values.length) return false
         const prevValue = indicator.values[lookbackIndex]
         if (typeof rule.value === 'string') {
@@ -354,8 +357,9 @@ export class BacktestEngine {
           return prevValue <= prevCompare && currentValue > currentCompare
         }
         return prevValue <= rule.value && currentValue > rule.value
+      }
         
-      case 'cross_below':
+      case 'cross_below': {
         if (lookbackIndex >= indicator.values.length) return false
         const prevVal = indicator.values[lookbackIndex]
         if (typeof rule.value === 'string') {
@@ -366,6 +370,7 @@ export class BacktestEngine {
           return prevVal >= prevCompare && currentValue < currentCompare
         }
         return prevVal >= rule.value && currentValue < rule.value
+      }
         
       default:
         return false
