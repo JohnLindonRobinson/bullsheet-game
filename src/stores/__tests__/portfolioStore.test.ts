@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { usePortfolioStore } from '../portfolioStore'
-import { mockTrade } from '@/test/utils'
+// import { mockTrade } from '@/test/utils'
 
 describe('PortfolioStore', () => {
   beforeEach(() => {
