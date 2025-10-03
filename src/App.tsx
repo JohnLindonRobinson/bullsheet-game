@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Dashboard } from './components/dashboard'
+import { ResponsiveDashboard } from './components/responsive-dashboard'
 import { useUserStore } from './stores/userStore'
 
 function App() {
@@ -34,7 +34,7 @@ function App() {
     )
   }
 
-  return <Dashboard />
+  return <ResponsiveDashboard />
 }
 
 export default App
