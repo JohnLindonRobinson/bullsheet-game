@@ -1,0 +1,103 @@
+# Caddyfile for BullSheet production deployment
+# Replace yourdomain.com with your actual domain
+
+{
+    # Global options
+    email admin@yourdomain.com
+    auto_https on
+}
+
+# Production site configuration
+bullsheet.yourdomain.com {
+    # Reverse proxy to Docker container
+    reverse_proxy app:80 {
+        health_uri /health
+        health_interval 30s
+        health_timeout 5s
+    }
+
+    # Enable compression
+    encode gzip
+
+    # Security headers (additional to nginx)
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Robots-Tag "noindex, nofollow"
+        -Server
+    }
+
+    # Rate limiting
+    rate_limit {
+        zone static_files {
+            match {
+                path *.js *.css *.png *.jpg *.jpeg *.gif *.ico *.svg
+            }
+            key {remote_ip}
+            events 100
+            window 1m
+        }
+
+        zone api {
+            match {
+                path /api/*
+            }
+            key {remote_ip}
+            events 30
+            window 1m
+        }
+
+        zone general {
+            key {remote_ip}
+            events 60
+            window 1m
+        }
+    }
+
+    # Logging
+    log {
+        output file /var/log/caddy/bullsheet.log {
+            roll_size 100mb
+            roll_keep 10
+        }
+        format json
+    }
+}
+
+# Staging site configuration (optional)
+staging.bullsheet.yourdomain.com {
+    reverse_proxy staging-app:80 {
+        health_uri /health
+        health_interval 30s
+        health_timeout 5s
+    }
+
+    encode gzip
+
+    header {
+        X-Robots-Tag "noindex, nofollow"
+        -Server
+    }
+
+    # Basic auth for staging
+    basicauth {
+        admin $2a$14$hzF3SlQwVBInzQDNTyKJmuQIEqsrY9eLrEzE2lOLnF.qQ8tzEQGFO
+    }
+
+    log {
+        output file /var/log/caddy/staging.log {
+            roll_size 100mb
+            roll_keep 5
+        }
+        format json
+    }
+}
+
+# Redirect www to non-www
+www.bullsheet.yourdomain.com {
+    redir https://bullsheet.yourdomain.com{uri} permanent
+}
+
+# Health check endpoint for monitoring
+:8080 {
+    respond /health "OK" 200
+}

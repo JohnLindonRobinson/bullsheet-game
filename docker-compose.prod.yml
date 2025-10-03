@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # Main application container
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: bullsheet-app
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    networks:
+      - bullsheet-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=false"  # Disable if using Traefik instead
+
+  # Caddy reverse proxy
+  caddy:
+    image: caddy:2-alpine
+    container_name: bullsheet-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"  # Health check endpoint
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - caddy_logs:/var/log/caddy
+    networks:
+      - bullsheet-network
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      - CADDY_ADMIN=0.0.0.0:2019
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Staging environment (optional)
+  staging-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: bullsheet-staging
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=staging
+    networks:
+      - bullsheet-network
+    profiles:
+      - staging
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  bullsheet-network:
+    driver: bridge
+    name: bullsheet-network
+
+volumes:
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local
+  caddy_logs:
+    driver: local
